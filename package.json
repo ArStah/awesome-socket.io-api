@@ -1,0 +1,87 @@
+{
+  "name": "socket.io-api",
+  "version": "0.0.1",
+  "description": "Api server&client over socket.io",
+  "repository": "https://github.com/ArStah/socket.io-api",
+  "author": "Arsen Stahanov <arsen.stahanov@gmail.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "unit": "cross-env NODE_ENV=test nyc mocha --recursive",
+    "build": "babel src -d dist",
+    "test": "npm run unit",
+    "lint": "eslint --ext .js src",
+    "flow": "flow",
+    "precommit": "npm run lint && npm run flow && npm run test",
+    "prepublish": "npm run precommit && npm run build"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 50,
+    "statements": 50,
+    "functions": 50,
+    "branches": 50,
+    "include": [
+      "src/server/*.js",
+      "src/client/*.js"
+    ],
+    "exclude": [
+      "dist",
+      "flow-typed/",
+      "test/server"
+    ],
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "extension": [
+      ".test.js"
+    ],
+    "cache": true,
+    "all": true,
+    "sourceMap": false,
+    "instrument": false
+  },
+  "dependencies": {
+    "debug": "^3.1.0",
+    "eventemitter2": "^5.0.1",
+    "graphql": "^0.13.2",
+    "multitab-events": "^0.0.4",
+    "multitab-singleton": "^0.0.2",
+    "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-plugin-istanbul": "^4.1.6",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-flowtype": "^2.46.3",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-mocha": "^5.0.0",
+    "flow-bin": "^0.71.0",
+    "graphql-tools": "^3.0.1",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1",
+    "sinon": "^4.5.0",
+    "sinon-chai": "^3.0.0"
+  }
+}
