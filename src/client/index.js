@@ -5,7 +5,6 @@ import SocketIOClient from 'socket.io-client';
 import MultiTabEvents from 'multitab-events';
 import MultiTabSingleton from 'multitab-singleton';
 
-
 import type { Socket } from 'socket.io-client';
 
 import { generateRequestID } from './utils';
@@ -64,14 +63,14 @@ export default class ApiClient extends EventEmitter {
       log.debug('disconnected');
     });
 
-    this._socket.on('message', (data) => {
+    this._socket.on('event', (data) => {
       log.debug('Got event %O', data);
       this._bus.emit(data.event, data.data);
     });
 
     this._bus.on('api.request', (data: TRequest) => {
-      this._socket.send(data);
-      this._socket.on(data.$_REQUEST_ID_$, (result) => {
+      this._socket.emit('request', data);
+      this._socket.on(`response.${data.$_REQUEST_ID_$}`, (result) => {
         this._bus.emit(`api.response.${data.$_REQUEST_ID_$}`, result);
         this._socket.removeAllListeners(data.$_REQUEST_ID_$);
       });

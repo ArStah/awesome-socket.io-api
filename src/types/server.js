@@ -1,8 +1,5 @@
 // @flow
+import type Client from '../server/Client';
+import type Server from '../server';
 
-export type TMiddleware = {
-  on?: {
-    connection?: (client: Object) => void,
-    request?: (Object) => void,
-  }
-};
+export type TServerMiddleware = (server: Server, client: Client) => any;

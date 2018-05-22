@@ -35,7 +35,7 @@ function errorResponse(socket: Object, requestID: string, err: ExecutionError, t
     details: err.details,
   };
 
-  socket.emit(requestID, ({
+  socket.emit(`response.${requestID}`, ({
     time,
     error,
     success: false,
@@ -49,13 +49,13 @@ function successResponse(socket: Object, requestID: string, result: {}, time: nu
     time,
   };
 
-  socket.emit(requestID, sendObject);
+  socket.emit(`response.${requestID}`, sendObject);
 }
 
 const server = new SocketIO(port);
 
 server.on('connection', (socket) => {
-  socket.on('message', async (requestData: TRequest) => {
+  socket.on('request', async (requestData: TRequest) => {
     const timeStart = +new Date();
 
     try {

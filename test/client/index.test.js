@@ -106,7 +106,7 @@ describe('api.client', () => {
         done();
       });
 
-      $server.send({
+      $server.emit('event', {
         event: 'kek',
         data: 'cheburek',
       });

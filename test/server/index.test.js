@@ -68,7 +68,7 @@ describe('api.server', () => {
   it('Should handle request', (done) => {
     const $_REQUEST_ID_$ = generateRequestID();
 
-    $client.send({
+    $client.emit('request', {
       $_REQUEST_ID_$,
       // Language=GraphQL
       query: `
@@ -82,7 +82,7 @@ describe('api.server', () => {
       `,
     });
 
-    $client.once($_REQUEST_ID_$, (data) => {
+    $client.once(`response.${$_REQUEST_ID_$}`, (data) => {
       expect(data.success).to.be.true;
       expect(data.data).to.deep.equal({
         falafel: falafels[0],
@@ -94,7 +94,7 @@ describe('api.server', () => {
   it('Should handle errors during request', (done) => {
     const $_REQUEST_ID_$ = generateRequestID();
 
-    $client.send({
+    $client.emit('request', {
       $_REQUEST_ID_$,
       // Language=GraphQL
       query: `
@@ -108,7 +108,7 @@ describe('api.server', () => {
       `,
     });
 
-    $client.once($_REQUEST_ID_$, (data) => {
+    $client.once(`response.${$_REQUEST_ID_$}`, (data) => {
       expect(data.success).to.be.false;
       expect(data.error).to.deep.equal({
         code: '__BUGAGA__',
@@ -120,7 +120,7 @@ describe('api.server', () => {
   it('Should handle graphql errors during request', (done) => {
     const $_REQUEST_ID_$ = generateRequestID();
 
-    $client.send({
+    $client.emit('request', {
       $_REQUEST_ID_$,
       // Language=GraphQL
       query: `
@@ -135,7 +135,7 @@ describe('api.server', () => {
       `,
     });
 
-    $client.once($_REQUEST_ID_$, (data) => {
+    $client.once(`response.${$_REQUEST_ID_$}`, (data) => {
       expect(data.success).to.be.false;
       expect(data.error.code).to.equal('$__GRAPHQL_ERROR__$');
       done();
@@ -145,7 +145,7 @@ describe('api.server', () => {
   it('Should handle request with variables', (done) => {
     const $_REQUEST_ID_$ = generateRequestID();
 
-    $client.send({
+    $client.emit('request', {
       $_REQUEST_ID_$,
       // Language=GraphQL
       query: `
@@ -162,7 +162,7 @@ describe('api.server', () => {
       },
     });
 
-    $client.once($_REQUEST_ID_$, (data) => {
+    $client.once(`response.${$_REQUEST_ID_$}`, (data) => {
       expect(data.success).to.be.true;
       expect(data.data).to.deep.equal({
         falafel: falafels[1],
@@ -172,14 +172,14 @@ describe('api.server', () => {
   });
 
   it('Should send event', (done) => {
-    $client.once('message', (data) => {
+    $client.once('event', (data) => {
       expect(data).to.deep.equal({
         event: 'kek',
         data: 'cheburek',
       });
       done();
     });
-    $server.send('kek', 'cheburek');
+    $server.broadcast('event', { event: 'kek', data: 'cheburek' });
   });
 
   after(() => {
