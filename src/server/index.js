@@ -11,7 +11,10 @@ import getLogger from '../logger';
 
 import ExecutionError from './ExecutionError';
 import type { TRequest } from '../types';
-import type { TServerMiddleware } from '../types/server';
+import type {
+  TServerMiddleware,
+  TMiddleware,
+} from '../types/server';
 
 const log = getLogger('server');
 
@@ -23,7 +26,7 @@ export default class ApiServer extends EventEmitter {
   _ids: number = 0;
   _graphql: Object;
   _io: SocketIO;
-  _middlewares: TServerMiddleware[];
+  _middlewares: TMiddleware[] = [];
 
   get socketIO() {
     return this._io;
@@ -32,14 +35,12 @@ export default class ApiServer extends EventEmitter {
   constructor({
     graphql,
     port,
-    middlewares,
   }: {
     graphql: {
       schema: any,
       resolvers?: Object,
     },
     port: number,
-    middlewares?: TServerMiddleware[],
   }) {
     super();
 
@@ -51,9 +52,6 @@ export default class ApiServer extends EventEmitter {
           schema,
           resolvers: graphql.resolvers,
         },
-      },
-      _middlewares: {
-        value: middlewares || [],
       },
     });
 
@@ -77,7 +75,7 @@ export default class ApiServer extends EventEmitter {
       const client = new Client(clientID, socket);
 
       await this._middlewares.reduce(
-        (prom, middleware) => prom.then(() => middleware(this, client)),
+        (prom, middleware) => prom.then(() => middleware(client)),
         Promise.resolve(),
       );
 
@@ -146,7 +144,8 @@ export default class ApiServer extends EventEmitter {
   }
 
   addMiddleware(middleware: TServerMiddleware) {
-    this._middlewares.push(middleware);
+    middleware.server(this);
+    this._middlewares.push(middleware.client);
   }
 
   destroy() {
