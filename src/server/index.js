@@ -75,7 +75,7 @@ export default class ApiServer extends EventEmitter {
       const client = new Client(clientID, socket);
 
       await this._middlewares.reduce(
-        (prom, middleware) => prom.then(() => middleware(client)),
+        (prom, middleware) => prom.then(() => middleware(this, client)),
         Promise.resolve(),
       );
 
